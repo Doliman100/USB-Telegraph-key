@@ -7,7 +7,7 @@
 	<title>Тренажер передачи кода Морзе</title>
 	<meta name="description" content="Передача USB ключем.">
 	<link rel="stylesheet" href="styles/style.css">
-	<script src="js/script.js"></script>
+	<script type="text/javascript" src="js/script.js" defer></script>
 </head>
 <body>
 	<div class="layer" id="transmit">
@@ -21,9 +21,9 @@
 	</div>
 	<div class="layer" id="settings" hidden>
 		<div id="title">Настройки</div>
-		<label for="volume">Громкость <input type="number" name="volume" id="volume-input" min="0" max="100"> %</label>
-		<label for="frequency">Частота <input type="number" name="frequency" id="frequency-input" min="100" step="100"> Гц</label>
-		<label for="speed">Скорость <input type="number" name="speed" id="speed-input" min="1"> гр/мин</label>
+		<label for="volume-input">Громкость <input type="number" name="volume" id="volume-input" min="0" max="100"> %</label>
+		<label for="frequency-input">Частота <input type="number" name="frequency" id="frequency-input" min="100" step="100"> Гц</label>
+		<label for="speed-input">Скорость <input type="number" name="speed" id="speed-input" min="1"> гр/мин</label>
 		<input type="button" value="Закрыть">
 	</div>
 </body>

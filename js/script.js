@@ -1,303 +1,270 @@
-let code =
-{
-	".-":		"А",
-	"-...":		"Б",
-	".--":		"В",
-	"--.":		"Г",
-	"-..":		"Д",
-	".":		"Е",
-	"...-":		"Ж",
-	"--..":		"З",
-	"..":		"И",
-	".---":		"Й",
-	"-.-":		"К",
-	".-..":		"Л",
-	"--":		"М",
-	"-.":		"Н",
-	"---":		"О",
-	".--.":		"П",
-	".-.":		"Р",
-	"...":		"С",
-	"-":		"Т",
-	"..-":		"У",
-	"..-.":		"Ф",
-	"....":		"Х",
-	"-.-.":		"Ц",
-	"---.":		"Ч",
-	"----":		"Ш",
-	"--.-":		"Щ",
-	"-.--":		"Ы",
-	"-..-":		"Ь",
-	"..-..":	"Э",
-	"..--":		"Ю",
-	".-.-":		"Я",
+const code = {
+  '.-': 'А',
+  '-...': 'Б',
+  '.--': 'В',
+  '--.': 'Г',
+  '-..': 'Д',
+  '.': 'Е',
+  '...-': 'Ж',
+  '--..': 'З',
+  '..': 'И',
+  '.---': 'Й',
+  '-.-': 'К',
+  '.-..': 'Л',
+  '--': 'М',
+  '-.': 'Н',
+  '---': 'О',
+  '.--.': 'П',
+  '.-.': 'Р',
+  '...': 'С',
+  '-': 'Т',
+  '..-': 'У',
+  '..-.': 'Ф',
+  '....': 'Х',
+  '-.-.': 'Ц',
+  '---.': 'Ч',
+  '----': 'Ш',
+  '--.-': 'Щ',
+  '-.--': 'Ы',
+  '-..-': 'Ь',
+  '..-..': 'Э',
+  '..--': 'Ю',
+  '.-.-': 'Я',
 
-	".----":	"1",
-	"..---":	"2",
-	"...--":	"3",
-	"....-":	"4",
-	".....":	"5",
-	"-....":	"6",
-	"--...":	"7",
-	"---..":	"8",
-	"----.":	"9",
-	"-----":	"0",
+  '.----': '1',
+  '..---': '2',
+  '...--': '3',
+  '....-': '4',
+  '.....': '5',
+  '-....': '6',
+  '--...': '7',
+  '---..': '8',
+  '----.': '9',
+  '-----': '0',
 
-	"-...-":	"=",
-	"......":	".",
-	".-.-.-":	",",
-	"..--..":	"?",
-	"-..-.":	"/",
-	"--..--":	"!",
-	"...-.-":	"<u>SK</u>",
-	".-.-.":	"<u>AP</u>",
-	// "-.-.-":	"<u>CT</u>",
-	// ".--.-.":	"@",
-	// ".--.-":	"&Aring,",
-	"........":	"<u>ERR</u>"
-	// ".-...":	"<u>AS</u>"
+  '-...-': '=',
+  '......': '.',
+  '.-.-.-': ',',
+  '..--..': '?',
+  '-..-.': '/',
+  '--..--': '!',
+  '...-.-': '<u>SK</u>',
+  '.-.-.': '<u>AP</u>',
+  // "-.-.-":	"<u>CT</u>",
+  // ".--.-.":	"@",
+  // ".--.-":	"&Aring,",
+  '........': '<u>ERR</u>'
+  // ".-...":	"<u>AS</u>"
 };
-
-// Elements
-let transmit_layer;
-let settings_layer;
-
-let led;
-let speed_output;
-let ratio_output;
-let effspeed_output;
-let output;
 
 //
 let volume;
-let dot_length; // 60 * 1000 ms / 50 dot
+let dotLength; // 60 * 1000 ms / 50 dot
 
-let signal_begin;
-let signal_end;
-let char_timer;
+let signalBegin;
+let signalEnd;
+let charTimer;
 
-let char_last = "";
+let lastChar = '';
 
-let dots = new Array(5)
-let dashes = new Array(5)
+const audioCtx = new AudioContext();
+const dots = new Array(5);
+const dashes = new Array(5);
 
-let not_pressed = true;
+let isPressed = false;
 
 // Trainer
-function Down(e)
-{
-	if (e.button != 0) { return; };
-	if (transmit_layer.hidden) { return; };
+const down = (e) => {
+  if (e.button !== 0 || transmitLayer.hidden) {
+    return;
+  }
 
-	gainNode.gain.value = volume;
+  gainNode.gain.value = volume;
 
-	signal_begin = Date.now();
-	
-	led.style.backgroundColor = "rgb(221, 221, 221)";
+  signalBegin = Date.now();
 
-	IsWordSpace();
-	
-	clearTimeout(char_timer);
+  led.style.backgroundColor = 'rgb(221, 221, 221)';
 
-	not_pressed = false;
-}
+  isWordSpace();
 
-function Up(e)
-{
-	if (e.button != 0) { return; };
-	if (not_pressed) { return; };
+  clearTimeout(charTimer);
 
-	gainNode.gain.value = 0;
+  isPressed = true;
+};
 
-	signal_end = Date.now();
-	
-	led.style.backgroundColor = "rgb(238, 238, 238)";
+const up = (e) => {
+  if (e.button !== 0 || !isPressed) {
+    return;
+  }
 
-	let diff = signal_end - signal_begin;
-	
-	if (diff > dot_length * 2)
-	{
-		char_last += "-";
+  gainNode.gain.value = 0;
 
-		dashes.shift(); 
-		dashes.push(diff);
-	}
-	else
-	{
-		char_last += ".";
+  signalEnd = Date.now();
 
-		dots.shift();
-		dots.push(diff);
-	}
+  led.style.backgroundColor = 'rgb(238, 238, 238)';
 
-	StatusUpdate();
-	
-	char_timer = setTimeout(CharSpace, dot_length * 2); // is inter character space
+  let diff = signalEnd - signalBegin;
 
-	not_pressed = true;
-}
+  if (diff > dotLength * 2) {
+    lastChar += '-';
 
-function CharSpace()
-{
-	if (code[char_last])
-	{
-		OutputAppend(code[char_last]);
-	}
-	else
-	{
-		OutputAppend("*");
-	}
-	
-	char_last = "";
-}
+    dashes.shift();
+    dashes.push(diff);
+  } else {
+    lastChar += '.';
 
-function IsWordSpace()
-{
-	if (signal_begin - signal_end > dot_length * 5)
-	{
-		OutputAppend(" ");
-		
-		char_last = "";
-	}
-}
+    dots.shift();
+    dots.push(diff);
+  }
 
-function OutputAppend(str)
-{
-	output.innerHTML += str;
-}
+  updateStatus();
 
-function StatusUpdate()
-{
-	let dot_avg = dots.reduce((a, c) => a + c) / dots.length;
-	let dash_avg = dashes.reduce((a, c) => a + c) / dashes.length;
+  charTimer = setTimeout(charSpace, dotLength * 2); // is inter character space
 
-	let _ratio = (dash_avg / dot_avg).toFixed(1);
-	let _effspeed = (3600 / dash_avg).toFixed();
-	
-	ratio_output.textContent = `Соотношение: ${_ratio}; `;
-	effspeed_output.textContent = `эфф. Скорость: ${_effspeed} гр/мин`;
-}
+  isPressed = false;
+};
+
+const charSpace = () => {
+  if (code[lastChar]) {
+    appendOutput(code[lastChar]);
+  } else {
+    appendOutput('*');
+  }
+
+  lastChar = '';
+};
+
+const isWordSpace = () => {
+  if (signalBegin - signalEnd > dotLength * 5) {
+    appendOutput(' ');
+
+    lastChar = '';
+  }
+};
+
+const appendOutput = (str) => {
+  output.innerHTML += str;
+};
+
+const updateStatus = () => {
+  let dotAvg = dots.reduce((a, c) => a + c) / dots.length;
+  let dashAvg = dashes.reduce((a, c) => a + c) / dashes.length;
+
+  let ratio = (dashAvg / dotAvg).toFixed(1);
+  let effSpeed = (3600 / dashAvg).toFixed();
+
+  outputRatio.textContent = `Соотношение: ${ratio}; `;
+  outputEffSpeed.textContent = `эфф. Скорость: ${effSpeed} гр/мин`;
+};
 
 // Oscillator
-let audioCtx = new AudioContext();
 
-let oscillator = audioCtx.createOscillator();
+const oscillator = audioCtx.createOscillator();
 oscillator.start();
 
-let gainNode = audioCtx.createGain();
+const gainNode = audioCtx.createGain();
 gainNode.gain.value = 0;
 
 oscillator.connect(gainNode);
 gainNode.connect(audioCtx.destination);
 
 // Settings
-function SettingsShow()
-{
-	if (!settings_layer.hidden) { return; }
+const showSettings = () => {
+  if (!settingsLayer.hidden) {
+    return;
+  }
 
-	transmit_layer.hidden = true;
-	settings_layer.hidden = false;
-}
+  transmitLayer.hidden = true;
+  settingsLayer.hidden = false;
+};
 
-function SettingsHide()
-{
-	settings_layer.hidden = true;
-	transmit_layer.hidden = false;
-}
+const hideSettings = () => {
+  settingsLayer.hidden = true;
+  transmitLayer.hidden = false;
+};
 
 // Settings - Storage
-function VolumeUpdate()
-{
-	volume = volume_input.value / 100;
-}
+const updateVolume = () => {
+  volume = inputVolume.value / 100;
+};
 
-function FrequencyUpdate()
-{
-	oscillator.frequency.value = frequency_input.value;
-}
+const updateFrequency = () => {
+  oscillator.frequency.value = inputFrequency.value;
+};
 
-function SpeedUpdate()
-{
-	speed_output.textContent = `Скорость: ${speed_input.value} гр/мин; `;
+const updateSpeed = () => {
+  speed_output.textContent = `Скорость: ${inputSpeed.value} гр/мин; `;
 
-	dot_length = 1200 / speed_input.value;
-}
+  dotLength = 1200 / inputSpeed.value;
+};
 
-function VolumeChanged()
-{
-	VolumeUpdate();
+const volumeChanged = () => {
+  updateVolume();
 
-	localStorage.setItem("volume", this.value);
-}
+  localStorage.setItem('volume', this.value);
+};
 
-function FrequencyChanged()
-{
-	FrequencyUpdate();
+const frequencyChanged = () => {
+  updateFrequency();
 
-	localStorage.setItem("frequency", this.value);
-}
+  localStorage.setItem('frequency', this.value);
+};
 
-function SpeedChanged()
-{
-	SpeedUpdate();
+const speedChanged = () => {
+  updateSpeed();
 
-	localStorage.setItem("speed", this.value);
-}
+  localStorage.setItem('speed', this.value);
+};
 
 // Init
-window.addEventListener("DOMContentLoaded", function()
-{
-	// Elements
-	transmit_layer = document.querySelector("#transmit");
-	settings_layer = document.querySelector("#settings");
+// Elements
+const transmitLayer = document.querySelector('#transmit');
+const settingsLayer = document.querySelector('#settings');
 
-	led = transmit_layer.querySelector("#led");
-	speed_output = transmit_layer.querySelector("#speed-output");
-	ratio_output = transmit_layer.querySelector("#ratio-output");
-	effspeed_output = transmit_layer.querySelector("#effspeed-output");
-	output = transmit_layer.querySelector("#output");
+const led = transmitLayer.querySelector('#led');
+const speed_output = transmitLayer.querySelector('#speed-output');
+const outputRatio = transmitLayer.querySelector('#ratio-output');
+outputEffSpeed = transmitLayer.querySelector('#effspeed-output');
+const output = transmitLayer.querySelector('#output');
 
-	volume_input = settings_layer.querySelector("#volume-input");
-	frequency_input = settings_layer.querySelector("#frequency-input");
-	speed_input = settings_layer.querySelector("#speed-input");
+inputVolume = settingsLayer.querySelector('#volume-input');
+inputFrequency = settingsLayer.querySelector('#frequency-input');
+inputSpeed = settingsLayer.querySelector('#speed-input');
 
-	let settings_close = settings_layer.querySelector("input[type=button]");
+const settings_close = settingsLayer.querySelector('input[type=button]');
 
-	//
-	volume_input.value = localStorage.getItem("volume") || "10";
-	frequency_input.value = localStorage.getItem("frequency") || "700";
-	speed_input.value = localStorage.getItem("speed") || "10";
+//
+inputVolume.value = localStorage.getItem('volume') || '10';
+inputFrequency.value = localStorage.getItem('frequency') || '700';
+inputSpeed.value = localStorage.getItem('speed') || '10';
 
-	VolumeUpdate();
-	FrequencyUpdate();
-	SpeedUpdate();
-	
-	dots.fill(dot_length);
-	dashes.fill(dot_length * 3);
+updateVolume();
+updateFrequency();
+updateSpeed();
 
-	StatusUpdate();
+dots.fill(dotLength);
+dashes.fill(dotLength * 3);
 
-	// Events
-	window.addEventListener("mousedown", Down);
-	window.addEventListener("mouseup", Up);
+updateStatus();
 
-	volume_input.addEventListener("change", VolumeChanged);
-	frequency_input.addEventListener("change", FrequencyChanged);
-	speed_input.addEventListener("change", SpeedChanged);
-	settings_close.addEventListener("click", SettingsHide);
+// Events
+window.addEventListener('mousedown', down);
+window.addEventListener('mouseup', up);
 
-	window.addEventListener("keydown", (e) =>
-	{
-		if (e.key === "Escape")
-		{
-			SettingsShow();
-		}
-	});
-	window.addEventListener("touchstart", SettingsShow);
+inputVolume.addEventListener('change', volumeChanged);
+inputFrequency.addEventListener('change', frequencyChanged);
+inputSpeed.addEventListener('change', speedChanged);
+settings_close.addEventListener('click', hideSettings);
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    showSettings();
+  }
 });
+window.addEventListener('touchstart', showSettings);
+
 
 // First visit
-if (audioCtx.state === "suspended")
-{
-	window.addEventListener("mousedown", () => audioCtx.resume(), { once: true });
+if (audioCtx.state === 'suspended') {
+  window.addEventListener('mousedown', () => audioCtx.resume(), { once: true });
 }
