@@ -1,0 +1,23 @@
+{
+  "name": "usb-telegraph-key",
+  "version": "0.0.1",
+  "description": "![Portable](images/portable.jpg)\r Web application. Morse code transmit trainer using a USB telegraph key.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BANTYC/USB-Telegraph-key.git"
+  },
+  "author": "Doliman100",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/BANTYC/USB-Telegraph-key/issues"
+  },
+  "homepage": "https://github.com/BANTYC/USB-Telegraph-key#readme",
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
