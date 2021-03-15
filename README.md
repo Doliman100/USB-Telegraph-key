@@ -12,6 +12,8 @@ Available at https://doliman100.com/morse-code-transmit-trainer
 * [ESC] - Settings
 
 ### Telegraph key
-<img src="images/telegraph-key.jpg" width="45%"> <img src="images/bottom.jpg" width="45%">
+<img src="images/telegraph-key.jpg" height="249px"> <img src="images/bottom.jpg" height="249px"> <img src="images/pcb-top.jpg" height="249px">
+
+* Mouse: Oklick 115S
 
 Based on https://lcwo.net/transmit
