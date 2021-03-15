@@ -50,11 +50,11 @@ const code = {
   '--..--': '!',
   '...-.-': '<u>SK</u>',
   '.-.-.': '<u>AP</u>',
-  // "-.-.-":	"<u>CT</u>",
-  // ".--.-.":	"@",
-  // ".--.-":	"&Aring,",
-  '........': '<u>ERR</u>'
-  // ".-...":	"<u>AS</u>"
+  // '-.-.-': '<u>CT</u>',
+  // '.--.-.': '@',
+  // '.--.-': '&Aring,',
+  '........': '<u>ERR</u>',
+  // '.-...': '<u>AS</u>',
 };
 
 //
@@ -67,7 +67,6 @@ let charTimer;
 
 let lastChar = '';
 
-const audioCtx = new AudioContext();
 const dots = new Array(5);
 const dashes = new Array(5);
 
@@ -103,7 +102,7 @@ const up = (e) => {
 
   led.style.backgroundColor = 'rgb(238, 238, 238)';
 
-  let diff = signalEnd - signalBegin;
+  const diff = signalEnd - signalBegin;
 
   if (diff > dotLength * 2) {
     lastChar += '-';
@@ -147,17 +146,18 @@ const appendOutput = (str) => {
 };
 
 const updateStatus = () => {
-  let dotAvg = dots.reduce((a, c) => a + c) / dots.length;
-  let dashAvg = dashes.reduce((a, c) => a + c) / dashes.length;
+  const dotAvg = dots.reduce((a, c) => a + c) / dots.length;
+  const dashAvg = dashes.reduce((a, c) => a + c) / dashes.length;
 
-  let ratio = (dashAvg / dotAvg).toFixed(1);
-  let effSpeed = (3600 / dashAvg).toFixed();
+  const ratio = (dashAvg / dotAvg).toFixed(1);
+  const effSpeed = (3600 / dashAvg).toFixed();
 
   outputRatio.textContent = `Соотношение: ${ratio}; `;
   outputEffSpeed.textContent = `эфф. Скорость: ${effSpeed} гр/мин`;
 };
 
 // Oscillator
+const audioCtx = new AudioContext();
 
 const oscillator = audioCtx.createOscillator();
 oscillator.start();
@@ -193,7 +193,7 @@ const updateFrequency = () => {
 };
 
 const updateSpeed = () => {
-  speed_output.textContent = `Скорость: ${inputSpeed.value} гр/мин; `;
+  outputSpeed.textContent = `Скорость: ${inputSpeed.value} гр/мин; `;
 
   dotLength = 1200 / inputSpeed.value;
 };
@@ -222,16 +222,16 @@ const transmitLayer = document.querySelector('#transmit');
 const settingsLayer = document.querySelector('#settings');
 
 const led = transmitLayer.querySelector('#led');
-const speed_output = transmitLayer.querySelector('#speed-output');
+const outputSpeed = transmitLayer.querySelector('#speed-output');
 const outputRatio = transmitLayer.querySelector('#ratio-output');
-outputEffSpeed = transmitLayer.querySelector('#effspeed-output');
+const outputEffSpeed = transmitLayer.querySelector('#effspeed-output');
 const output = transmitLayer.querySelector('#output');
 
-inputVolume = settingsLayer.querySelector('#volume-input');
-inputFrequency = settingsLayer.querySelector('#frequency-input');
-inputSpeed = settingsLayer.querySelector('#speed-input');
+const inputVolume = settingsLayer.querySelector('#volume-input');
+const inputFrequency = settingsLayer.querySelector('#frequency-input');
+const inputSpeed = settingsLayer.querySelector('#speed-input');
 
-const settings_close = settingsLayer.querySelector('input[type=button]');
+const settingsClose = settingsLayer.querySelector('input[type=button]');
 
 //
 inputVolume.value = localStorage.getItem('volume') || '10';
@@ -254,7 +254,7 @@ window.addEventListener('mouseup', up);
 inputVolume.addEventListener('change', volumeChanged);
 inputFrequency.addEventListener('change', frequencyChanged);
 inputSpeed.addEventListener('change', speedChanged);
-settings_close.addEventListener('click', hideSettings);
+settingsClose.addEventListener('click', hideSettings);
 
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -263,8 +263,7 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('touchstart', showSettings);
 
-
 // First visit
 if (audioCtx.state === 'suspended') {
-  window.addEventListener('mousedown', () => audioCtx.resume(), { once: true });
+  window.addEventListener('mousedown', () => audioCtx.resume(), {once: true});
 }

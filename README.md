@@ -1,4 +1,4 @@
-# USB-Telegraph-key
+# Morse code transmit trainer
 ![Portable](images/portable.jpg)
 Web application. Morse code transmit trainer using a USB telegraph key.
 
