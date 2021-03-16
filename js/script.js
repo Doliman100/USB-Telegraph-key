@@ -73,11 +73,7 @@ const dashes = new Array(5);
 let isPressed = false;
 
 // Trainer
-const down = (e) => {
-  if (e.button !== 0 || transmitLayer.hidden) {
-    return;
-  }
-
+const down = () => {
   gainNode.gain.value = volume;
 
   signalBegin = Date.now();
@@ -221,7 +217,7 @@ const speedChanged = () => {
 const transmitLayer = document.querySelector('#transmit');
 const settingsLayer = document.querySelector('#settings');
 
-const led = transmitLayer.querySelector('#led');
+const led = document.getElementsByTagName('body')[0];
 const outputSpeed = transmitLayer.querySelector('#speed-output');
 const outputRatio = transmitLayer.querySelector('#ratio-output');
 const outputEffSpeed = transmitLayer.querySelector('#effspeed-output');
